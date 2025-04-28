@@ -1,0 +1,49 @@
+# Node dependencies and build artifacts
+/node_modules/
+/dist/
+/out-tsc/
+/tmp/
+/temp/
+
+# Angular build system
+/.angular/cache/
+/.angular/cache
+
+# Compiled output
+/**/*.js.map
+/**/*.d.ts
+
+# TypeScript cache
+*.tsbuildinfo
+
+# IDE/editor settings
+.vscode/
+.idea/
+/*.sublime-project
+/*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and secret files
+.env
+.env.*.local
+secrets.json
+
+# Coverage reports
+/coverage/
+/*.lcov
+
+# Testing artifacts
+/jest-puppeteer/
+
+# Misc
+*.log
+.cache/
