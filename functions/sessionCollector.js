@@ -66,7 +66,7 @@ exports.handler = async (event, context) => {
             };
         }
 
-        const { apiKey, tinyCode, fingerprint, data, action } = body;
+        let { apiKey, tinyCode, fingerprint, data, action } = body;
 
         // 1. Type-check & normalize fingerprint
         if (typeof fingerprint === 'number') {
