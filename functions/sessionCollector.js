@@ -67,9 +67,22 @@ exports.handler = async (event, context) => {
         }
 
         const { apiKey, tinyCode, fingerprint, data, action } = body;
-        // const { fingerprint, data, action } = body;
 
+        // 1. Type-check & normalize fingerprint
+        if (typeof fingerprint === 'number') {
+            // convert number → string
+            fingerprint = fingerprint.toString();
+        } else if (typeof fingerprint !== 'string') {
+            // immediately reject any non-string/non-number
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: "Fingerprint must be a string or number." })
+            };
+        }
 
+        // 2. Trim whitespace & ensure it’s not empty
+        fingerprint = fingerprint.trim();
         if (!fingerprint) {
             return {
                 statusCode: 400,
@@ -157,38 +170,38 @@ exports.handler = async (event, context) => {
             // Retrieve the latest session to end
             const latestSessionSnapForEnd = await sessionsCollRef.orderBy('startedAt', 'desc').limit(1).get();
             if (latestSessionSnapForEnd.empty) {
-              return {
-                statusCode: 404,
-                headers,
-                body: JSON.stringify({ error: "No active session found for this fingerprint." })
-              };
+                return {
+                    statusCode: 404,
+                    headers,
+                    body: JSON.stringify({ error: "No active session found for this fingerprint." })
+                };
             }
             const lastSessionDoc = latestSessionSnapForEnd.docs[0];
             const lastSessionData = lastSessionDoc.data();
             if (lastSessionData.endedAt !== null && lastSessionData.endedAt !== undefined) {
-              return {
-                statusCode: 400,
-                headers,
-                body: JSON.stringify({ error: "Session has already ended." })
-              };
+                return {
+                    statusCode: 400,
+                    headers,
+                    body: JSON.stringify({ error: "Session has already ended." })
+                };
             }
             // Set sessionRef to the active session document
             sessionRef = lastSessionDoc.ref;
             const now = admin.firestore.FieldValue.serverTimestamp();
             await sessionRef.update({
-              endedAt: now,
-              lastActivity: now,
+                endedAt: now,
+                lastActivity: now,
             });
             const finalSession = (await sessionRef.get()).data();
             return {
-              statusCode: 200,
-              headers,
-              body: JSON.stringify({
-                message: "Session ended. Data stored in Firestore.",
-                session: finalSession,
-              }),
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({
+                    message: "Session ended. Data stored in Firestore.",
+                    session: finalSession,
+                }),
             };
-          }
+        }
 
         // Default response if no recognized action is provided
         return {
