@@ -66,7 +66,7 @@ exports.handler = async (event, context) => {
             };
         }
 
-        let { apiKey, tinyCode, fingerprint, data, action } = body;
+        let { apiKey, tinyCode, fingerprint, data, action, websiteName } = body;
 
         // 1. Type-check & normalize fingerprint
         if (typeof fingerprint === 'number') {
@@ -92,7 +92,7 @@ exports.handler = async (event, context) => {
         }
 
         // Reference to the fingerprint document and its sessions sub-collection
-        const fingerprintDocRef = db.collection('sessions').doc(fingerprint);
+        const fingerprintDocRef = db.collection(websiteName).doc(fingerprint);
         const sessionsCollRef = fingerprintDocRef.collection('sessions');
 
         // Get the most recent session for this fingerprint (order by startedAt descending)
